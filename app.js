@@ -1,4 +1,5 @@
 const GunboundWindow = document.getElementById("GunboundWindow");
+const btnOpen = document.getElementById("btnOpen");
 
 class Gunbound {
     constructor(){
@@ -19,6 +20,23 @@ Gunbound.prototype.close = function(){
                 },
                 size: this.size,
                 fps: this.fps,
+                timeend: 5,
+            };
+            try{
+                data.fps = parseInt(document.getElementById("wFPS").value);
+                if(data.fps < 1){
+                    data.fps = 1;
+                }
+            }catch(error){
+                data.fps = this.fps;
+            }
+            try{
+                data.timeend = parseInt(document.getElementById("wTime").value);
+                if(data.timeend < 1){
+                    data.timeend = 1;
+                }
+            }catch(error){
+                data.timeend = 5;
             };
             const app = setInterval(()=>{
                 GunboundWindow.width = data.size.w;
@@ -48,7 +66,7 @@ Gunbound.prototype.close = function(){
                     clearInterval(app);
                     resolve('Successful close window.');
                 }
-            },5);
+            },data.timeend);
         }catch(error){
             reject('Ups. an error when closing window.')
         }
@@ -64,7 +82,24 @@ Gunbound.prototype.open = function(){
                 },
                 size: this.size,
                 fps: this.fps,
+                timeend: 5,
             };
+            try{
+                data.fps = parseInt(document.getElementById("wFPS").value);
+                if(data.fps < 1){
+                    data.fps = 1;
+                }
+            }catch(error){
+                data.fps = this.fps;
+            }
+            try{
+                data.timeend = parseInt(document.getElementById("wTime").value);
+                if(data.timeend < 1){
+                    data.timeend = 1;
+                }
+            }catch(error){
+                data.timeend = 5;
+            }
             const app = setInterval(()=>{
                 GunboundWindow.width = data.size.w;
                 GunboundWindow.height = data.size.h;
@@ -92,16 +127,16 @@ Gunbound.prototype.open = function(){
                     clearInterval(app);
                     resolve('Successful open window.');
                 }   
-            },5)
+            },data.timeend)
         }catch(error){
             reject('Ups. an error when opening window.')
         }
     });
 };
-Gunbound.prototype.change = function(uri){
+Gunbound.prototype.change = function(uri = "transparent"){
     return new Promise((resolve, reject)=>{
         try{
-            GunboundWindow.style.background = uri;
+            GunboundWindow.style.backgroundImage = uri;
             resolve('Change is successful.');
         }catch(error){
             reject('Ups. an error when changing window.')
@@ -126,10 +161,27 @@ Gunbound.prototype.sleep = function(){
     return new Promise((resolve, reject)=>{
         try{
             let time = 0;
-            const second = 1000;
-            const endSecond = 5;
+            let second;
+            try{
+                second = parseInt(document.getElementById("sTime").value);
+                if(second < 0){
+                    second = 0;
+                }
+            }catch(error){
+                second = 1000;
+            }
+            let endSecond;
+            try{
+                endSecond = parseInt(document.getElementById("sEnd").value);
+                if(endSecond < 0){
+                    endSecond = 0;
+                }
+            }catch(error){
+                endSecond = 5;
+            }
 
             const TIMER_SLEEP = setInterval(()=>{
+                addNotify(time,"rgb(251 250 112 / 54%)");
                 if(time == endSecond || GunboundWindow.classList.contains("clicked")){
                     clearInterval(TIMER_SLEEP);
                     resolve('Successful sleep window.');
@@ -137,24 +189,46 @@ Gunbound.prototype.sleep = function(){
                 time++;
             },second);
         }catch(error){
-            resolve('Ups. an error when hide the windows.');
+            reject('Ups. an error when hide the windows.');
         }
     });
 }
 const gunbound = new Gunbound();
 
-async function callGB(){
-    console.log(await gunbound.close());
-    console.log(await gunbound.change('red'));
-    console.log(await gunbound.open());
-    console.log(await gunbound.sleep());
-    console.log(await gunbound.close());
-    console.log(await gunbound.change('green'));
-    console.log(await gunbound.open());
+function addNotify(text, color="#d5fb708a"){
+    let notify = document.createElement('div');
+    notify.classList.add('notify');
+    notify.textContent = text;
+    notify.style.backgroundColor = color;
+    document.getElementById('notification').appendChild(notify);
 }
-callGB();
+async function callGB(){
+    document.getElementById('notification').innerHTML = '';
+    btnOpen.disabled = true;
+    const close1 = await gunbound.close();
+    addNotify(close1);
+    const change1 = await gunbound.change('url(./resources/logoSoftnyx.png)');
+    addNotify(change1);
+    const open1 = await gunbound.open();
+    addNotify(open1);
+    const sleep1 = await gunbound.sleep();
+    addNotify(sleep1);
+    const close2 = await gunbound.close();
+    addNotify(close2);
+    const change2 = await gunbound.change('url(./resources/background2.png)');
+    addNotify(change2);
+    const open2 = await gunbound.open();
+    addNotify(open2);
+    btnOpen.disabled = false;
+    
+}
+
 
 
 GunboundWindow.addEventListener("click",()=>{
     GunboundWindow.classList.add("clicked");
+});
+
+document.getElementById("btnOpen").addEventListener("click",()=>{
+    callGB();
 })

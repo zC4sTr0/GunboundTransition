@@ -19,12 +19,48 @@
             -o-background-size: cover;
             background-size: cover;
             justify-content: center;
+            background-color: rgba(216, 255, 143, 0.363);
+        }
+        #notification{
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            margin-right: 22px;
+            margin-top: 22px;
+        }
+        .notify{
+            background-color: #d5fb708a;
+            color: #212121;
+            width: 200px;
+            height: 30px;
+            text-align: center;
+            border: 1px solid black;
+            border-radius: 2px;
+            margin-bottom: 2px;
+        }
+        .txtOption input{
+            width: 30px;
         }
     </style>
 	
     <canvas id="GunboundWindow"></canvas>
+    <div id="notification"></div>
+    <form>
+        <div class="txtOption">
+            Window FPS: <input type="text" id="wFPS" value="4">
+        </div>
+        <div class="txtOption">
+            Window Time: <input type="text" id="wTime" value="5">
+        </div>
+        <div class="txtOption">
+            Sleep End: <input type="text" id="sEnd" value="5">
+        </div>
+        <div class="txtOption">
+            Sleep Time: <input type="text" id="sTime" value="1000">
+        </div>
+    </form>
     <br>
-    <button id="btnOpen">Open</button>
+    <button id="btnOpen">Start</button>
 	<script src="app.js"></script>
   </body>
 </html>
